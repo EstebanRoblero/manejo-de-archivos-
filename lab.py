@@ -19,3 +19,30 @@ DEFAULT_CONFIG = {
     "foto_perfil": "",
 
 }
+
+class ConfigMananger:
+    @staticmethod:
+    def load_config():
+        if not os.path.exists(CONFIG_FILE):
+            return DEFAULT_CONFIG
+
+        try:
+            with open(CONFIG_FILE, 'r', encofing= 'utf-8')as f:
+                data = json.load(f)
+
+                return {**DEFAULT_CONFING, **data}
+        except json.JSONDecodeError:
+            messagebox.showerror("Archivo corrupto", "el archivo de configuracion esta corrupto. los valores se usaran por defecto")
+            return DEFAULT_CONFING.copy() 
+        except PermissionError:
+            massagebox.showerrror("sin permisos", "no tiene o no hay permisos de lectura. Se usarana los valores por defecto.")
+        except Exception as e:
+            massagebox.showerror("Eror desconocido", f"error al leer: {e}")
+            return DEFAULT_CONFIG.copy() 
+
+    @staticmethod
+    def save_config(config_data):
+        try:
+            # aqui hay respaldo en (backup)
+            if os.path.exists(CONFIG_FILE):
+                    
