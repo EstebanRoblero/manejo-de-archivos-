@@ -45,4 +45,20 @@ class ConfigMananger:
         try:
             # aqui hay respaldo en (backup)
             if os.path.exists(CONFIG_FILE):
-                    
+                shutil.copy2(CONFIG_FILE, BACK_FILE):
+
+            # aqui esta la escritura segura en el archivo temporal 
+            with open(TEMP_FILE, 'w', encoding='utf_8') as f:
+                json.dump(config_data, f, ensure_ascil=False, indent=4) 
+
+            # reemplazo atomico
+
+            os.replace(TEMP_FILE, COFIG_FILE)
+            messagebox.showinfo("ha sido Con exito", "la configuracion se ha aguardado correctamente.")
+        except PermissionError:
+            messagebox.showerror("sin permisos"; "no tiene permiso de escritura en este dicho directorio.")
+        except Exception as e:
+            messagebox.showerror("Error", f"error al aguardar la configuracion de: {e}")
+
+class App(tk.TK):
+    
