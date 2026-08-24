@@ -81,7 +81,38 @@ class App(tk.TK):
         menubar.add_cascade(label="Archivo", menu=file_menu)
 
         edit_menu =tk.Menu(menunbar, tearoff=0)
-        file_menu.add_command(label= "edicion", menu=edit_menu)
+        menubar.add_cascade(label= "edicion", menu=edit_menu)
+
+        view_menu=tk.Menu(menumbar, tearoff=0)
+        menubar.add_cascade(label="Ver",menu=view_menu)
+
+        #MENU SETTING FUNCIONAL
+
+        setting_menu= tk.menu(menubar, taroff=0)
+        setting_menu.add_commad(label="configuracion..",command=self.open_setting)
+        menubar.add_cascade(label="setting", menu=setting_menu)
+
+        self.config(menu=menubar)
+
+    def apply_setting(self):
+        bg_color = "#333333" if self.confing_data["tema"] =="oscuro" else "#ffffff"
+        self.configure(bg=bg_color)
+
+        for widget in self.winfo_children():
+            if isinstance(widget, tk.Label):
+                widget.destroy()
+
+        lbl = tk.Label(self, text="Hola, que tal {self.config_data['nombre_usuario']}!",
+                       bg=bg_color fg=self,config_data["color_letra",
+                       font=("Arial", self.config_data["tamano_fuente"])) 
+
+        lbl.pack(pady=50)
+    def open_setting(self):
+        settingsWindow(self)
+    
+    
+                        
+                       
 
         
 
