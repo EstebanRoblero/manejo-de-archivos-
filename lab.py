@@ -1,8 +1,8 @@
-import tkinter as tk 
-from tkinter import filedialog, colorchooser, messagebox, ttk 
-import json 
-import os 
-import shutil 
+import tkinter as tk
+from tkinter import filedialog, colorchooser, messagebox, ttk
+import json
+import os
+import shutil
 
 CONFIG_FILE = "config.json"
 TEM_FILE = "temp_config.json"
@@ -61,4 +61,27 @@ class ConfigMananger:
             messagebox.showerror("Error", f"error al aguardar la configuracion de: {e}")
 
 class App(tk.TK):
-    
+    def __init__(self):
+        super().__init__()
+        self.tittle("App de gestion de archivos")
+        self.geometry("400x300")
+
+
+        self.config_data = ConfigMananger.load_config()
+        self.create_menu()
+        self.apply_config() 
+
+    def create_menu(self):
+        menubar= tk.Menu(self)
+
+        #menu de simulaciones 
+
+        file_menu = tk.Menu(menubar, tearoff=0)
+        file_menu.add_command(label="Nuevo (Simulado)")
+        menubar.add_cascade(label="Archivo", menu=file_menu)
+
+        edit_menu =tk.Menu(menunbar, tearoff=0)
+        file_menu.add_command(label= "edicion", menu=edit_menu)
+
+        
+
