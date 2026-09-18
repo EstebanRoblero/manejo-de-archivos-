@@ -121,6 +121,40 @@ class SettingsWindow(tk.TopLevel):
         self.cb_tema.pack(fill="x", padx=10, pady=2)
 
         #idioma
+        tk.Label(self, text="Idioma: ").pack(anchor="w", padx=10, pady=2)
+        self.cb_idioma = ttk.Combobox(
+            self, values = ["Español ES", "English EN"], state="readonly",
+        )
+
+        self.cb_idioma.set(self.config_data.get("Idioma", "Español ES"))
+        self.cb_idioma.pack(fill="x", padx=10, pady=2)
+
+        #tamaño de la fuente
+        self.sp_fuente = tk.Spinbox(self, from_=8, to=32)
+        self.sp_fuente.delete(0, "end")
+        self.sp_fuente.insert(0, self.config_data.get("Tamaño de la fuente", 12))
+        self.sp_fuente.pack(fill="x", padx=10, pady=2)
+
+        #color del menu
+        btn_col_menu = tk.Button(
+            self, text="Color de la barra de menu", command=self.pick_color_menu
+        )
+        btn_col_menu.pack(fill="x", padx=10, pady=2)
+
+        #color de letra
+        btn_color_letra = tk.Button(
+            self, text="Color de la fuente", command=self.pick_color_letra
+        )
+        btn_color_letra.pack(fill="x", padx=10, pady=2)
+
+        #boton foto de perfil
+        btn_foto = tk.Button(
+            self, text="Seleccione su foto de perfil", command=self.pick_foto
+        )
+        btn_foto.pack(fill="x", padx=10, pady=2)
+
+        self.lbl_foto = tk.Label(self, text=self.config_data.get("foto_perfil", ""))
+        self.lbl_foto.pack(padx=10, pady=2)
 
 
 
