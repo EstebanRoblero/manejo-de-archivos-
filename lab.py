@@ -156,93 +156,107 @@ class SettingsWindow(tk.TopLevel):
         self.lbl_foto = tk.Label(self, text=self.config_data.get("foto_perfil", ""))
         self.lbl_foto.pack(padx=10, pady=2)
 
-
-
-
-class App(tk.Tk):
-
-    def __init__(self):
-        super().__init__()
-
-        self.title("App de gestión de archivos")
-        self.geometry("400x300")
-
-        self.config_data = ConfigMananger.load_config()
-
-        self.create_menu()
-        self.apply_config()
-
-    def create_menu(self):
-        menubar = tk.Menu(self)
-
-        # Menú de simulaciones
-        file_menu = tk.Menu(menubar, tearoff=0)
-
-        file_menu.add_command(
-            label="Nuevo (Simulado)"
+        #guardar
+        btn_guardar = tk.Button(
+            self, text="Guardar Configuración", command=self.save
         )
+        btn_guardar.pack(pady=15)
 
-        menubar.add_cascade(
-            label="Archivo",
-            menu=file_menu
+    def pick_color_menu(self):
+        color = colorchooser.askcolor(title="Seleccionar color de menú")
+        if color[1]:
+            self.config_data["color_menu"] = color[1]
+
+    def pick_color_letra(self):
+        color = colorchooser.askcolor(title="Seleccionar color de letra")
+        if color[1]:
+            self.config_data["color_letra"] = color[1]
+
+    def pick_foto(self):
+        filename = filedialog.askopenfilename(
+            title="Seleccionar imagen",
+            filetypes=[("Archivos de imagen", "*.png *.jpg *.jpeg *.gif *.bmp")],
         )
+        if filename:
+            self.config_data["foto_perfil"] = filename
+            self.lbl_foto.config(text=filename)
 
-        edit_menu = tk.Menu(menubar, tearoff=0)
+    def save(self):
+        try:
+            self.config_data["nombre_usuario"] = self.ent_usuario.get()
+            self.config_data["tema"] = self.cb_tema.get()
+            self.config_data["idioma"] = self.cb_idioma.get()
+            self.config_data["tamano_fuente"] = int(self.sp_fuente.get())
 
-        menubar.add_cascade(
-            label="Edición",
-            menu=edit_menu
-        )
+            if ConfigManager.save_config(self.config_data):
+                self.parent.config_data = self.config_data
+                self.parent.apply_config()
+                self.destroy()
+        except ValueError:
+            messagebox.showerror(
+                "Error", "El tamaño de fuente debe ser un número entero."
+            )
 
-        view_menu = tk.Menu(menubar, tearoff=0)
+    class App(tk.Tk):
 
-        menubar.add_cascade(
-            label="Ver",
-            menu=view_menu
-        )
+        def __init__(self):
+            super().__init__()
 
-        # Menú Settings
-        setting_menu = tk.Menu(menubar, tearoff=0)
+            self.title("App de gestión de archivos")
+            self.geometry("400x300")
 
-        setting_menu.add_command(
-            label="Configuración...",
-            command=self.open_setting
-        )
+            self.config_data = ConfigManager.load_config()
 
-        menubar.add_cascade(
-            label="Settings",
-            menu=setting_menu
-        )
+            self.create_menu()
+            self.apply_config()
 
-        self.config(menu=menubar)
+        def create_menu(self):
+            self.menubar = tk.Menu(self)
 
-    def apply_config(self):
+            file_menu = tk.Menu(self.menubar, tearoff=0)
+            file_menu.add_command(label="Nuevo (Simulado)")
+            self.menubar.add_cascade(label="Archivo", menu=file_menu)
 
-        bg_color = (
-            "#333333"
-            if self.config_data["tema"] == "oscuro"
-            else "#ffffff"
-        )
+            edit_menu = tk.Menu(self.menubar, tearoff=0)
+            self.menubar.add_cascade(label="Edición", menu=edit_menu)
 
-        self.configure(bg=bg_color)
+            view_menu = tk.Menu(self.menubar, tearoff=0)
+            self.menubar.add_cascade(label="Ver", menu=view_menu)
 
-        for widget in self.winfo_children():
-            if isinstance(widget, tk.Label):
-                widget.destroy()
+            setting_menu = tk.Menu(self.menubar, tearoff=0)
+            setting_menu.add_command(
+                label="Configuración...", command=self.open_setting
+            )
+            self.menubar.add_cascade(label="Settings", menu=setting_menu)
 
-        lbl = tk.Label(
-            self,
-            text=f"Hola, ¿qué tal {self.config_data['nombre_usuario']}?",
-            bg=bg_color,
-            fg=self.config_data["color_letra"],
-            font=("Arial", self.config_data["tamano_fuente"])
-        )
+            self.config(menu=self.menubar)
 
-        lbl.pack(pady=50)
+        def apply_config(self):
+            bg_color = (
+                "#333333" if self.config_data.get("tema") == "oscuro" else "#ffffff"
+            )
+            self.configure(bg=bg_color)
 
-    def open_setting(self):
-        settingsWindow(self)
+            if "color_menu" in self.config_data:
+                self.menubar.config(bg=self.config_data["color_menu"])
 
+            for widget in self.winfo_children():
+                if isinstance(widget, tk.Label):
+                    widget.destroy()
 
-app = App()
-app.mainloop()
+            lbl = tk.Label(
+                self,
+                text=f"Hola, ¿qué tal {self.config_data.get('nombre_usuario')}?",
+                bg=bg_color,
+                fg=self.config_data.get("color_letra", "#000000"),
+                font=("Arial", self.config_data.get("tamano_fuente", 12)),
+            )
+
+            lbl.pack(pady=50)
+
+        def open_setting(self):
+            SettingsWindow(self)
+
+    if __name__ == "__main__":
+        app = App()
+        app.mainloop()
